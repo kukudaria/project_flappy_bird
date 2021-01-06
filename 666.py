@@ -75,7 +75,7 @@ def update_score(score, high_score):
     return high_score
 
 
-pygame.mixer.pre_init(frequency=44100, size=16, channels=1, buffer=512)
+pygame.mixer.pre_init(frequency=44100, size=8, channels=1, buffer=512)
 pygame.init()
 screen = pygame.display.set_mode((288, 512))
 clock = pygame.time.Clock()
@@ -116,9 +116,9 @@ pipe_height = [200, 300, 400]
 game_over_surface = pygame.image.load('assets/message.png').convert_alpha()
 game_over_rect = game_over_surface.get_rect(center=(144, 256))
 
-flap_sound = pygame.mixer.Sound('audio/wing.ogg')
-death_sound = pygame.mixer.Sound('audio/hit.ogg')
-score_sound = pygame.mixer.Sound('audio/point.ogg')
+flap_sound = pygame.mixer.Sound('audio/sfx_wing.wav')
+death_sound = pygame.mixer.Sound('audio/sfx_hit.wav')
+score_sound = pygame.mixer.Sound('audio/sfx_point.wav')
 
 score_sound_countdown = 100
 
