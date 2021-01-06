@@ -74,7 +74,7 @@ def update_score(score, high_score):
         high_score = score
     return high_score
 
-
+#sound here
 pygame.mixer.pre_init(frequency=44100, size=8, channels=1, buffer=512)
 pygame.init()
 screen = pygame.display.set_mode((288, 512))
