@@ -120,7 +120,7 @@ flap_sound = pygame.mixer.Sound('audio/wing.ogg')
 death_sound = pygame.mixer.Sound('audio/hit.ogg')
 score_sound = pygame.mixer.Sound('audio/point.ogg')
 
-score_sound_countdown = 100
+score_sound_countdown = 50
 
 while True:
     for event in pygame.event.get():
@@ -170,7 +170,7 @@ while True:
         score_sound_countdown -= 1
         if score_sound_countdown <= 0:
             score_sound.play()
-            score_sound_countdown = 100
+            score_sound_countdown = 50
     else:
         screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score, high_score)
