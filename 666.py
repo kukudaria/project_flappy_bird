@@ -75,7 +75,7 @@ def update_score(score, high_score):
     return high_score
 
 
-pygame.mixer.pre_init(frequency=44100, size=8, channels=1, buffer=1024)
+pygame.mixer.pre_init(frequency=44100, size=16, channels=1, buffer=512)
 pygame.init()
 screen = pygame.display.set_mode((288, 512))
 clock = pygame.time.Clock()
