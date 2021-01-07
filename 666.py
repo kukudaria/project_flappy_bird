@@ -97,13 +97,13 @@ def create_bonus(pipes, bonuses):
 
         for pipe in pipes:
             pipes_bonuses_collisions.append(bonus.colliderect(pipe))
-            if not True in pipes_bonuses_collisions:
-                return bonuses
+        if not True in pipes_bonuses_collisions:
+            return bonus
 
 
 
 def move_bonuses(bonuses_list_rect):
-    for bonus in bonuses_list_rect[0]:
+    for bonus in bonuses_list_rect:
         bonus.centerx -= 5
     return bonuses_list_rect
 
