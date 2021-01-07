@@ -95,15 +95,15 @@ def create_bonus(bonuses):
     return bonus
 
 
-def move_bonuses(bonuses):
-    for bonus in bonuses:
+def move_bonuses(bonuses_list_rect):
+    for bonus in bonuses_list_rect:
         bonus.centerx -= 4
-    return bonuses
+    return bonuses_list_rect
 
 
-def draw_bonuses(bonuses):
+def draw_bonuses(bonuses, bonuses_list_rect):
     random_bonus_surface = random.choice(bonuses)
-    for bonus in bonuses:
+    for bonus in bonuses_list_rect:
         screen.blit(random_bonus_surface, bonus)
 
 
@@ -202,7 +202,7 @@ while True:
             bird_surface, bird_rect = bird_animation()
 
         if event.type == SPAWNBONUS:
-            bonus_list.extend(create_bonus())
+            bonus_list.append(create_bonus(bonuses))
 
     screen.blit(bg_surface, (0, 0))
 
@@ -221,8 +221,9 @@ while True:
         draw_pipes(pipe_list)
 
         # Bonuses
-        bonus_list = move_bonuses(bonus_list)
-        draw_bonuses(bonus_list)
+        if bonus_list:
+            bonus_list = move_bonuses(bonus_list)
+            draw_bonuses(bonuses, bonus_list)
 
         score += 0.01
         score_display('main_game')
