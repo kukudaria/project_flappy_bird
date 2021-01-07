@@ -88,6 +88,25 @@ def update_score(score, high_score):
     return high_score
 
 
+def create_bonus(bonuses):
+    random_bonus_pos = random.choice(bonus_height)
+    random_bonus_surface = random.choice(bonuses)
+    bonus = random_bonus_surface.get_rect(midtop=(350 * 2, random_bonus_pos))
+    return bonus
+
+
+def move_bonuses(bonuses):
+    for bonus in bonuses:
+        bonus.centerx -= 4
+    return bonuses
+
+
+def draw_bonuses(bonuses):
+    random_bonus_surface = random.choice(bonuses)
+    for bonus in bonuses:
+        screen.blit(random_bonus_surface, bonus)
+
+
 indent2 = 450
 indent = 50 * 2
 screenx = 288 * 2
@@ -110,18 +129,22 @@ last_collision_time = 0
 
 bg_surface = pygame.transform.scale2x(pygame.image.load('assets/background-day.png').convert())
 
+# Floor
 floor_surface = pygame.transform.scale2x(pygame.image.load('assets/base.png').convert())
 floor_x_pos = 0
 
-life_bonus_surface = pygame.image.load().convert_alpha()
-life_bonus_rect = life_bonus_surface.get_rect(center=())
-invul_bonus_surface = pygame.image.load().convert_alpha()
-invul_bonus_rect = invul_bonus_surface.get_rect(center=())
-big_bonus_surface = pygame.image.load().convert_alpha()
-big_bonus_rect = big_bonus_surface.get_rect(center=())
-small_bonus_surface = pygame.image.load().convert_alpha()
-small_bonus_rect = small_bonus_surface.get_rect(center=())
+# Bonuses
+life_bonus_surface = pygame.image.load('assets/yellowbird-midflap.png').convert_alpha()
+invul_bonus_surface = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
+big_bonus_surface = pygame.image.load('assets/yellowbird-upflap.png').convert_alpha()
+small_bonus_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+bonus_height = [200, 250, 300, 350, 400]
+bonuses = [life_bonus_surface, invul_bonus_surface, big_bonus_surface, small_bonus_surface]
+bonus_list = []
+SPAWNBONUS = pygame.USEREVENT + 2
+pygame.time.set_timer(SPAWNBONUS, 2000)
 
+# Bird
 bird_downflap = pygame.image.load('assets/bluebird-downflap.png').convert_alpha()
 bird_midflap = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
 bird_upflap = pygame.image.load('assets/bluebird-upflap.png').convert_alpha()
@@ -133,9 +156,7 @@ bird_rect = bird_surface.get_rect(center=(indent, screeny / 2))
 BIRDFLAP = pygame.USEREVENT + 1
 pygame.time.set_timer(BIRDFLAP, 200)
 
-# bird_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
-# bird_rect = bird_surface.get_rect(center=(50, 256))
-
+# Pipes
 pipe_surface = pygame.image.load('assets/pipe-green.png')
 pipe_list = []
 SPAWNPINE = pygame.USEREVENT
@@ -145,6 +166,7 @@ pipe_height = [200, 300, 400]
 game_over_surface = pygame.image.load('assets/message.png').convert_alpha()
 game_over_rect = game_over_surface.get_rect(center=(screenx / 2, screeny / 2))
 
+# Sound
 flap_sound = pygame.mixer.Sound('audio/sfx_wing.wav')
 death_sound = pygame.mixer.Sound('audio/sfx_hit.wav')
 score_sound = pygame.mixer.Sound('audio/sfx_point.wav')
@@ -179,6 +201,9 @@ while True:
 
             bird_surface, bird_rect = bird_animation()
 
+        if event.type == SPAWNBONUS:
+            bonus_list.extend(create_bonus())
+
     screen.blit(bg_surface, (0, 0))
 
     if game_active:
@@ -194,6 +219,10 @@ while True:
         # Pipes
         pipe_list = move_pipes(pipe_list)
         draw_pipes(pipe_list)
+
+        # Bonuses
+        bonus_list = move_bonuses(bonus_list)
+        draw_bonuses(bonus_list)
 
         score += 0.01
         score_display('main_game')
