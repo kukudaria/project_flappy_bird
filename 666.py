@@ -194,6 +194,7 @@ while True:
             if event.key == pygame.K_SPACE and game_active is False:
                 game_active = True
                 pipe_list.clear()
+                bonus_list.clear()
                 bird_rect.center = (indent, screeny / 2)
                 bird_movement = 0
                 score = 0
