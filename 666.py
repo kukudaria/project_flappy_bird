@@ -31,16 +31,23 @@ def draw_pipes(pipes):
             screen.blit(flip_pipe, pipe)
 
 
-def check_collision(pipes):
-    for pipe in pipes:
-        if bird_rect.colliderect(pipe):
-            death_sound.play()
-            return False
-    if bird_rect.top <= -50 or bird_rect.bottom >= 450:
-        death_sound.play()
-        return False
+def check_collision(pipes, life_countdown, invulnerability):
+    if invulnerability is True:
 
-    return True
+    if invulnerability is False:
+        for pipe in pipes:
+            if bird_rect.colliderect(pipe):
+                death_sound.play()
+                life_countdown -= 1
+                invulnerability = True
+        if bird_rect.top <= -50 or bird_rect.bottom >= 450:
+            death_sound.play()
+            life_countdown -= 1
+            invulnerability = True
+        if life_countdown <= 0:
+            return False, life_countdown
+
+    return True, life_countdown
 
 
 def rotate_bird(bird):
@@ -87,6 +94,8 @@ bird_movement = 0
 game_active = True
 score = 0
 high_score = 0
+life_countdown = 20
+invulnerability = False
 
 bg_surface = pygame.image.load('assets/background-day.png').convert()
 
@@ -116,9 +125,9 @@ pipe_height = [200, 300, 400]
 game_over_surface = pygame.image.load('assets/message.png').convert_alpha()
 game_over_rect = game_over_surface.get_rect(center=(144, 256))
 
-flap_sound = pygame.mixer.Sound('audio/wing.ogg')
-death_sound = pygame.mixer.Sound('audio/hit.ogg')
-score_sound = pygame.mixer.Sound('audio/point.ogg')
+flap_sound = pygame.mixer.Sound('audio/sfx_wing.wav')
+death_sound = pygame.mixer.Sound('audio/sfx_hit.wav')
+score_sound = pygame.mixer.Sound('audio/sfx_point.wav')
 
 score_sound_countdown = 100
 
@@ -134,7 +143,7 @@ while True:
                 flap_sound.play()
             if event.key == pygame.K_SPACE and game_active is False:
                 game_active = True
-                pipe_list.clear()
+                # pipe_list.clear()
                 bird_rect.center = (50, 256)
                 bird_movement = 0
                 score = 0
@@ -158,8 +167,9 @@ while True:
         rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
         screen.blit(rotated_bird, bird_rect)
-        check_collision(pipe_list)
-        game_active = check_collision(pipe_list)
+        check_collision(pipe_list, life_countdown, invulnerability)
+        game_active, life_countdown = check_collision(pipe_list, life_countdown, invulnerability)
+        print(life_countdown)
 
         # Pipes
         pipe_list = move_pipes(pipe_list)
