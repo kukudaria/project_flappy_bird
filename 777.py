@@ -88,21 +88,27 @@ def update_score(score, high_score):
     return high_score
 
 
-def create_bonus(bonuses):
-    random_bonus_pos = random.choice(bonus_height)
-    random_bonus_surface = random.choice(bonuses)
-    bonus = random_bonus_surface.get_rect(midtop=(350 * 2, random_bonus_pos))
-    return bonus
+def create_bonus(pipes, bonuses):
+    while True:
+        random_bonus_pos = random.choice(bonus_height)
+        random_bonus_surface = random.choice(bonuses)
+        bonus = random_bonus_surface.get_rect(midtop=(350 * 2, random_bonus_pos))
+        pipes_bonuses_collisions = []
+
+        for pipe in pipes:
+            pipes_bonuses_collisions.append(bonus.colliderect(pipe))
+        if not True in pipes_bonuses_collisions:
+            return bonus, random_bonus_surface
 
 
 def move_bonuses(bonuses_list_rect):
+    print(bonuses_list_rect)
     for bonus in bonuses_list_rect:
-        bonus.centerx -= 4
+        bonus.centerx -= 2
     return bonuses_list_rect
 
 
-def draw_bonuses(bonuses, bonuses_list_rect):
-    random_bonus_surface = random.choice(bonuses)
+def draw_bonuses(random_bonus_surface, bonuses_list_rect):
     for bonus in bonuses_list_rect:
         screen.blit(random_bonus_surface, bonus)
 
@@ -186,6 +192,7 @@ while True:
             if event.key == pygame.K_SPACE and game_active is False:
                 game_active = True
                 pipe_list.clear()
+                bonus_list.clear()
                 bird_rect.center = (indent, screeny / 2)
                 bird_movement = 0
                 score = 0
@@ -202,7 +209,8 @@ while True:
             bird_surface, bird_rect = bird_animation()
 
         if event.type == SPAWNBONUS:
-            bonus_list.append(create_bonus(bonuses))
+            bonus_rect, random_bonus_surface = create_bonus(pipe_list, bonuses)
+            bonus_list.append(bonus_rect)
 
     screen.blit(bg_surface, (0, 0))
 
@@ -223,7 +231,7 @@ while True:
         # Bonuses
         if bonus_list:
             bonus_list = move_bonuses(bonus_list)
-            draw_bonuses(bonuses, bonus_list)
+            draw_bonuses(random_bonus_surface, bonus_list)
 
         score += 0.01
         score_display('main_game')
