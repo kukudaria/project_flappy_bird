@@ -48,12 +48,12 @@ def check_collision(pipes, life_countdown, last_collision_time):
                 life_countdown, last_collision_time = ummunity(last_collision_time, life_countdown)
 
 
-            if bird_rect.top <= -50 or bird_rect.bottom >= 450:
-                death_sound.play()
-                life_countdown -= 1
+        if bird_rect.top <= -50 or bird_rect.bottom >= 450:
+            death_sound.play()
+            life_countdown -= 1
 
         if life_countdown <= 0:
-            return False, life_countdown
+            return False, life_countdown, last_collision_time
 
         return True, life_countdown, last_collision_time
 
@@ -102,7 +102,7 @@ bird_movement = 0
 game_active = True
 score = 0
 high_score = 0
-life_countdown = 20
+life_countdown = 3
 invulnerability = False
 last_collision_time = 0
 
