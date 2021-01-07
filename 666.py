@@ -4,8 +4,8 @@ import random
 
 
 def draw_floor():
-    screen.blit(floor_surface, (floor_x_pos,  450))
-    screen.blit(floor_surface, (floor_x_pos + 288, 450))
+    screen.blit(floor_surface, (floor_x_pos,  indent2))
+    screen.blit(floor_surface, (floor_x_pos + screenx, indent2))
 
 
 def create_pipe():
@@ -24,7 +24,7 @@ def move_pipes(pipes):
 # ???????
 def draw_pipes(pipes):
     for pipe in pipes:
-        if pipe.bottom >= 512:
+        if pipe.bottom >= screeny:
             screen.blit(pipe_surface, pipe)
         else:
             flip_pipe = pygame.transform.flip(pipe_surface, False, True)
@@ -48,7 +48,7 @@ def check_collision(pipes, life_countdown, last_collision_time):
                 life_countdown, last_collision_time = ummunity(last_collision_time, life_countdown)
 
 
-        if bird_rect.top <= -50 or bird_rect.bottom >= 450:
+        if bird_rect.top <= -indent or bird_rect.bottom >= indent2:
             death_sound.play()
             life_countdown -= 1
 
@@ -65,22 +65,22 @@ def rotate_bird(bird):
 
 def bird_animation():
     new_bird = bird_frames[bird_index]
-    new_bird_rect = new_bird.get_rect(center=(50, bird_rect.centery))
+    new_bird_rect = new_bird.get_rect(center=(indent, bird_rect.centery))
     return new_bird, new_bird_rect
 
 
 def score_display(game_state):
     if game_state == 'main_game':
         score_surface = game_font.render(str(int(score)), True, (255, 255, 255))
-        score_rect = score_surface.get_rect(center=(144, 50))
+        score_rect = score_surface.get_rect(center=(screenx / 2, indent))
         screen.blit(score_surface, score_rect)
     if game_state == 'game_over':
         score_surface = game_font.render(f'Score: {int(score)}', True, (255, 255, 255))
-        score_rect = score_surface.get_rect(center=(144, 50))
+        score_rect = score_surface.get_rect(center=(screenx / 2, indent))
         screen.blit(score_surface, score_rect)
 
         high_score_surface = game_font.render(f'High score: {int(high_score)}', True, (255, 255, 255))
-        high_score_rect = high_score_surface.get_rect(center=(144, 425))
+        high_score_rect = high_score_surface.get_rect(center=(screenx / 2, 425))
         screen.blit(high_score_surface, high_score_rect)
 
 
@@ -88,11 +88,13 @@ def update_score(score, high_score):
     if score > high_score:
         high_score = score
     return high_score
-
-
+indent2 = 450
+indent = 50
+screenx = 288
+screeny = 512
 pygame.mixer.pre_init(frequency=44100, size=8, channels=1, buffer=1024)
 pygame.init()
-screen = pygame.display.set_mode((288, 512))
+screen = pygame.display.set_mode((screenx, screeny))
 clock = pygame.time.Clock()
 game_font = pygame.font.Font('04B_19.TTF', 20)
 
@@ -117,7 +119,7 @@ bird_upflap = pygame.image.load('assets/bluebird-upflap.png').convert_alpha()
 bird_frames = [bird_downflap, bird_midflap, bird_upflap]
 bird_index = 0
 bird_surface = bird_frames[bird_index]
-bird_rect = bird_surface.get_rect(center=(50, 256))
+bird_rect = bird_surface.get_rect(center=(indent, screeny / 2))
 
 BIRDFLAP = pygame.USEREVENT + 1
 pygame.time.set_timer(BIRDFLAP, 200)
@@ -132,7 +134,7 @@ pygame.time.set_timer(SPAWNPINE, 1000)
 pipe_height = [200, 300, 400]
 
 game_over_surface = pygame.image.load('assets/message.png').convert_alpha()
-game_over_rect = game_over_surface.get_rect(center=(144, 256))
+game_over_rect = game_over_surface.get_rect(center=(screenx / 2, screeny / 2))
 
 flap_sound = pygame.mixer.Sound('audio/sfx_wing.wav')
 death_sound = pygame.mixer.Sound('audio/sfx_hit.wav')
@@ -152,8 +154,8 @@ while True:
                 flap_sound.play()
             if event.key == pygame.K_SPACE and game_active is False:
                 game_active = True
-                # pipe_list.clear()
-                bird_rect.center = (50, 256)
+                pipe_list.clear()
+                bird_rect.center = (indent, screeny / 2)
                 bird_movement = 0
                 score = 0
 
@@ -191,6 +193,7 @@ while True:
             score_sound.play()
             score_sound_countdown = 100
     else:
+        life_countdown = 3
         screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score, high_score)
         score_display('game_over')
@@ -198,9 +201,9 @@ while True:
     # Floor
     floor_x_pos -= 1
     draw_floor()
-    if floor_x_pos <= -288:
+    if floor_x_pos <= -screenx:
         floor_x_pos = 0
-    screen.blit(floor_surface, (floor_x_pos, 450))
+    screen.blit(floor_surface, (floor_x_pos, indent2))
 
     pygame.display.update()
     clock.tick(70)
