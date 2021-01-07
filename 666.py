@@ -30,24 +30,33 @@ def draw_pipes(pipes):
             flip_pipe = pygame.transform.flip(pipe_surface, False, True)
             screen.blit(flip_pipe, pipe)
 
+def ummunity(last_collision_time, life_countdown):
+    if pygame.time.get_ticks() - last_collision_time > 3000:  # The time is in ms.
+        life_countdown -= 1
+        last_collision_time = pygame.time.get_ticks()
+        death_sound.play()
+        print(last_collision_time,life_countdown)
 
-def check_collision(pipes, life_countdown, invulnerability):
-    if invulnerability is True:
+        return life_countdown, last_collision_time
 
-    if invulnerability is False:
+
+
+
+def check_collision(pipes, life_countdown, last_collision_time):
+
         for pipe in pipes:
             if bird_rect.colliderect(pipe):
+                life_countdown, last_collision_time = ummunity(last_collision_time, life_countdown)
+
+
+            if bird_rect.top <= -50 or bird_rect.bottom >= 450:
                 death_sound.play()
                 life_countdown -= 1
-                invulnerability = True
-        if bird_rect.top <= -50 or bird_rect.bottom >= 450:
-            death_sound.play()
-            life_countdown -= 1
-            invulnerability = True
+
         if life_countdown <= 0:
             return False, life_countdown
 
-    return True, life_countdown
+        return True, life_countdown, last_collision_time
 
 
 def rotate_bird(bird):
@@ -96,6 +105,7 @@ score = 0
 high_score = 0
 life_countdown = 20
 invulnerability = False
+last_collision_time = 0
 
 bg_surface = pygame.image.load('assets/background-day.png').convert()
 
@@ -167,8 +177,8 @@ while True:
         rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
         screen.blit(rotated_bird, bird_rect)
-        check_collision(pipe_list, life_countdown, invulnerability)
-        game_active, life_countdown = check_collision(pipe_list, life_countdown, invulnerability)
+        check_collision(pipe_list, life_countdown, last_collision_time)
+        game_active, life_countdown, last_collision_time = check_collision(pipe_list, life_countdown, last_collision_time)
         print(life_countdown)
 
         # Pipes
