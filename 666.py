@@ -31,19 +31,18 @@ def draw_pipes(pipes):
             screen.blit(flip_pipe, pipe)
 
 def ummunity(last_collision_time, life_countdown):
-    if pygame.time.get_ticks() - last_collision_time > 3000:  # The time is in ms.
+    if pygame.time.get_ticks() - last_collision_time > 500:  # The time is in ms.
         life_countdown -= 1
         last_collision_time = pygame.time.get_ticks()
         death_sound.play()
         print(last_collision_time,life_countdown)
 
-        return life_countdown, last_collision_time
+    return life_countdown, last_collision_time
 
 
 
 
 def check_collision(pipes, life_countdown, last_collision_time):
-
         for pipe in pipes:
             if bird_rect.colliderect(pipe):
                 life_countdown, last_collision_time = ummunity(last_collision_time, life_countdown)
