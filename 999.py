@@ -203,7 +203,7 @@ pygame.time.set_timer(SPAWNPINE, 500)
 pipe_height = [300, 350, 400]
 
 # Game_over
-game_over_surface = pygame.image.load('assets/message.png').convert_alpha()
+game_over_surface = pygame.image.load('assets/game_over.png').convert_alpha()
 game_over_rect = game_over_surface.get_rect(center=(screenx / 2, screeny / 2))
 
 # Sound
