@@ -178,10 +178,6 @@ last_bonus_time = 0
 
 bg_surface = pygame.transform.scale2x(pygame.image.load('assets/cave.jpg').convert())
 
-# Floor
-floor_surface = pygame.transform.scale2x(pygame.image.load('assets/base.png').convert())
-floor_x_pos = 0
-
 # Bonuses
 life_bonus_surface = pygame.image.load('assets/yellowbird-midflap.png').convert_alpha()
 invul_bonus_surface = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
@@ -295,13 +291,6 @@ while True:
         high_score = update_score(score, high_score)
         score_display('game_over')
         life_display('game_over')
-
-    # Floor
-    floor_x_pos -= 1
-    draw_floor()
-    if floor_x_pos <= -screenx:
-        floor_x_pos = 0
-    screen.blit(floor_surface, (floor_x_pos, indent2))
 
     pygame.display.update()
     clock.tick(70)
