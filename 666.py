@@ -46,7 +46,7 @@ def check_collision(pipes, life_countdown, last_collision_time):
         if bird_rect.colliderect(pipe):
             life_countdown, last_collision_time = ummunity(last_collision_time, life_countdown)
 
-    if bird_rect.top <= -indent or bird_rect.bottom >= indent2:
+    if bird_rect.top <= -indent or bird_rect.bottom >= indent2 + 80:
         death_sound.play()
         life_countdown -= 1
 
@@ -171,7 +171,7 @@ bird_movement = 0
 game_active = True
 score = fake_score = 0
 high_score = 0
-life_countdown = 100
+life_countdown = 5
 invulnerability = False
 last_collision_time = 0
 last_bonus_time = 0
@@ -286,7 +286,7 @@ while True:
         life_display('main_game')
 
     else:
-        life_countdown = 100
+        life_countdown = 5
         screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score, high_score)
         score_display('game_over')
