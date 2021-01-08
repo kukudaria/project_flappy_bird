@@ -38,7 +38,6 @@ def ummunity(last_collision_time, life_countdown):
         life_countdown -= 1
         last_collision_time = pygame.time.get_ticks()
         death_sound.play()
-
     return life_countdown, last_collision_time
 
 
@@ -150,6 +149,7 @@ def life_display(game_state):
 def update_life_countdown(life_countdown, fake_score):
     if fake_score % 2 == 0 and fake_score != 0:
         life_countdown += 1
+        life_sound.play()
         fake_score = 0
     return life_countdown, fake_score
 
@@ -187,8 +187,11 @@ life_bonus_surface = pygame.image.load('assets/yellowbird-midflap.png').convert_
 invul_bonus_surface = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
 big_bonus_surface = pygame.image.load('assets/yellowbird-upflap.png').convert_alpha()
 small_bonus_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+heart_bonus_surface = pygame.image.load('assets/heart.png').convert_alpha()
+#bonuses = [life_bonus_surface, invul_bonus_surface, big_bonus_surface, small_bonus_surface]
+
 bonus_height = [200, 250, 300, 350, 400]
-bonuses = [life_bonus_surface, invul_bonus_surface, big_bonus_surface, small_bonus_surface]
+bonuses = [heart_bonus_surface]
 bonus_list = []
 SPAWNBONUS = pygame.USEREVENT + 2
 pygame.time.set_timer(SPAWNBONUS, 5000)
@@ -220,6 +223,7 @@ game_over_rect = game_over_surface.get_rect(center=(screenx / 2, screeny / 2))
 flap_sound = pygame.mixer.Sound('audio/sfx_wing.wav')
 death_sound = pygame.mixer.Sound('audio/sfx_hit.wav')
 score_sound = pygame.mixer.Sound('audio/sfx_point.wav')
+life_sound = pygame.mixer.Sound('audio/life_sound.wav')
 
 
 while True:
@@ -262,7 +266,10 @@ while True:
         bird_movement += gravity
         rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
-        screen.blit(rotated_bird, bird_rect)
+        if pygame.time.get_ticks() - last_collision_time > 500:
+            screen.blit(rotated_bird, bird_rect)
+        elif pygame.time.get_ticks() % 3 != 0:
+            screen.blit(rotated_bird, bird_rect)
 
         check_collision(pipe_list, life_countdown, last_collision_time)
         fake_score, score,  last_bonus_time = check_bon_coll(bonus_list, score, last_bonus_time, fake_score)
