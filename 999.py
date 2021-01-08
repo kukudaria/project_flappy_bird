@@ -38,7 +38,6 @@ def ummunity(last_collision_time, life_countdown):
         life_countdown -= 1
         last_collision_time = pygame.time.get_ticks()
         death_sound.play()
-
     return life_countdown, last_collision_time
 
 
@@ -61,6 +60,7 @@ def stop_bonus(last_bonus_time, score, fake_score):
     if pygame.time.get_ticks() - last_bonus_time > 200:  # The time is in ms.
         score += 1
         fake_score += 1
+        score_sound.play()
         last_bonus_time = pygame.time.get_ticks()
     return score, last_bonus_time, fake_score
 
@@ -220,7 +220,6 @@ flap_sound = pygame.mixer.Sound('audio/sfx_wing.wav')
 death_sound = pygame.mixer.Sound('audio/sfx_hit.wav')
 score_sound = pygame.mixer.Sound('audio/sfx_point.wav')
 
-score_sound_countdown = 100
 
 while True:
     for event in pygame.event.get():
@@ -262,7 +261,10 @@ while True:
         bird_movement += gravity
         rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
-        screen.blit(rotated_bird, bird_rect)
+        if pygame.time.get_ticks() - last_collision_time > 500:
+            screen.blit(rotated_bird, bird_rect)
+        elif pygame.time.get_ticks() % 3 != 0:
+            screen.blit(rotated_bird, bird_rect)
 
         check_collision(pipe_list, life_countdown, last_collision_time)
         fake_score, score,  last_bonus_time = check_bon_coll(bonus_list, score, last_bonus_time, fake_score)
@@ -280,11 +282,8 @@ while True:
             draw_bonuses(random_bonus_surface, bonus_list)
 
         score_display('main_game')
-        score_sound_countdown -= 1
         life_display('main_game')
-        if score_sound_countdown <= 0:
-            score_sound.play()
-            score_sound_countdown = 100
+
     else:
         life_countdown = 100
         screen.blit(game_over_surface, game_over_rect)
