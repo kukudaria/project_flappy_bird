@@ -12,7 +12,9 @@ def create_pipe():
     random_pipe_pos = random.choice(pipe_height)
     bottom_pipe = pipe_surface.get_rect(midtop=(350 * 2, random_pipe_pos))
     top_pipe = pipe_surface.get_rect(midbottom=(350 * 2, random_pipe_pos - 160))
-    return bottom_pipe, top_pipe
+    pipes = [bottom_pipe, top_pipe]
+    pipe = random.choice(pipes)
+    return pipe
 
 
 def move_pipes(pipes):
@@ -36,13 +38,13 @@ def ummunity(last_collision_time, life_countdown):
         life_countdown -= 1
         last_collision_time = pygame.time.get_ticks()
         death_sound.play()
-        print(last_collision_time, life_countdown)
 
     return life_countdown, last_collision_time
 
 
 def check_collision(pipes, life_countdown, last_collision_time):
     for pipe in pipes:
+        print(pipe)
         if bird_rect.colliderect(pipe):
             life_countdown, last_collision_time = ummunity(last_collision_time, life_countdown)
 
@@ -54,6 +56,21 @@ def check_collision(pipes, life_countdown, last_collision_time):
         return False, life_countdown, last_collision_time
 
     return True, life_countdown, last_collision_time
+
+
+def stop_bonus(last_bonus_time, life_countdown):
+    if pygame.time.get_ticks() - last_bonus_time > 200:  # The time is in ms.
+        life_countdown += 1
+        last_bonus_time = pygame.time.get_ticks()
+    return life_countdown, last_bonus_time
+
+
+def check_bon_coll(bonuses, life_countdown, last_bonus_time):
+    for bonus in bonuses:
+        if bird_rect.colliderect(bonus):
+            life_countdown, last_bonus_time = stop_bonus(last_bonus_time, life_countdown)
+            print(life_countdown)
+    return life_countdown, last_bonus_time
 
 
 def rotate_bird(bird):
@@ -102,7 +119,6 @@ def create_bonus(pipes, bonuses):
 
 
 def move_bonuses(bonuses_list_rect):
-    print(bonuses_list_rect)
     for bonus in bonuses_list_rect:
         bonus.centerx -= 6
     return bonuses_list_rect
@@ -146,9 +162,10 @@ bird_movement = 0
 game_active = True
 score = 0
 high_score = 0
-life_countdown = 3
+life_countdown = 100
 invulnerability = False
 last_collision_time = 0
+last_bonus_time = 0
 
 bg_surface = pygame.transform.scale2x(pygame.image.load('assets/background-day.png').convert())
 
@@ -183,8 +200,8 @@ pygame.time.set_timer(BIRDFLAP, 200)
 pipe_surface = pygame.image.load('assets/pipe-green.png')
 pipe_list = []
 SPAWNPINE = pygame.USEREVENT
-pygame.time.set_timer(SPAWNPINE, 1000)
-pipe_height = [200, 300, 400]
+pygame.time.set_timer(SPAWNPINE, 500)
+pipe_height = [300, 350, 400]
 
 # Game_over
 game_over_surface = pygame.image.load('assets/message.png').convert_alpha()
@@ -216,7 +233,7 @@ while True:
                 score = 0
 
         if event.type == SPAWNPINE:
-            pipe_list.extend(create_pipe())
+            pipe_list.append(create_pipe())
 
         if event.type == BIRDFLAP:
             if bird_index < 2:
@@ -239,8 +256,8 @@ while True:
         bird_rect.centery += bird_movement
         screen.blit(rotated_bird, bird_rect)
         check_collision(pipe_list, life_countdown, last_collision_time)
+        life_countdown, last_bonus_time = check_bon_coll(bonus_list, life_countdown, last_bonus_time)
         game_active, life_countdown, last_collision_time = check_collision(pipe_list, life_countdown, last_collision_time)
-        print(life_countdown)
 
         # Pipes
         pipe_list = move_pipes(pipe_list)
