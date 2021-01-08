@@ -187,8 +187,11 @@ life_bonus_surface = pygame.image.load('assets/yellowbird-midflap.png').convert_
 invul_bonus_surface = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
 big_bonus_surface = pygame.image.load('assets/yellowbird-upflap.png').convert_alpha()
 small_bonus_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+heart_bonus_surface = pygame.image.load('assets/heart.png').convert_alpha()
+#bonuses = [life_bonus_surface, invul_bonus_surface, big_bonus_surface, small_bonus_surface]
+
 bonus_height = [200, 250, 300, 350, 400]
-bonuses = [life_bonus_surface, invul_bonus_surface, big_bonus_surface, small_bonus_surface]
+bonuses = [heart_bonus_surface]
 bonus_list = []
 SPAWNBONUS = pygame.USEREVENT + 2
 pygame.time.set_timer(SPAWNBONUS, 5000)
