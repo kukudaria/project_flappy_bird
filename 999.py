@@ -175,7 +175,7 @@ invulnerability = False
 last_collision_time = 0
 last_bonus_time = 0
 
-bg_surface = pygame.transform.scale2x(pygame.image.load('assets/background-day.png').convert())
+bg_surface = pygame.transform.scale2x(pygame.image.load('assets/cave.jpg').convert())
 
 # Floor
 floor_surface = pygame.transform.scale2x(pygame.image.load('assets/base.png').convert())
@@ -205,7 +205,7 @@ BIRDFLAP = pygame.USEREVENT + 1
 pygame.time.set_timer(BIRDFLAP, 200)
 
 # Pipes
-pipe_surface = pygame.image.load('assets/pipe-green.png')
+pipe_surface = pygame.image.load('assets/pipe-red.png')
 pipe_list = []
 SPAWNPINE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPINE, 500)
