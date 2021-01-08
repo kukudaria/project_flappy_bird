@@ -176,7 +176,7 @@ invulnerability = False
 last_collision_time = 0
 last_bonus_time = 0
 
-bg_surface = pygame.transform.scale2x(pygame.image.load('assets/background-day.png').convert())
+bg_surface = pygame.transform.scale2x(pygame.image.load('assets/cave.jpg').convert())
 
 # Floor
 floor_surface = pygame.transform.scale2x(pygame.image.load('assets/base.png').convert())
