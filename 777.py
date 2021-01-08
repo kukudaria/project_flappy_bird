@@ -104,30 +104,13 @@ def create_bonus(pipes, bonuses):
 def move_bonuses(bonuses_list_rect):
     print(bonuses_list_rect)
     for bonus in bonuses_list_rect:
-        bonus.centerx -= 6
+        bonus.centerx -= 2
     return bonuses_list_rect
 
 
 def draw_bonuses(random_bonus_surface, bonuses_list_rect):
     for bonus in bonuses_list_rect:
         screen.blit(random_bonus_surface, bonus)
-
-
-def life_display(game_state):
-    if game_state == 'main_game':
-        life_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
-        life_rect = life_surface.get_rect(center=(50, indent - 60))
-        screen.blit(life_surface, life_rect)
-        life_count_surface = game_font.render(str(int(life_countdown)), True, (255, 255, 255))
-        life_count_rect = life_count_surface.get_rect(center=(80, indent - 60))
-        screen.blit(life_count_surface, life_count_rect)
-    if game_state == 'game_over':
-        life_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
-        life_rect = life_surface.get_rect(center=(50, indent - 60))
-        screen.blit(life_surface, life_rect)
-        life_count_surface = game_font.render('0', True, (255, 255, 255))
-        life_count_rect = life_count_surface.get_rect(center=(80, indent - 60))
-        screen.blit(life_count_surface, life_count_rect)
 
 
 indent2 = 450
@@ -165,7 +148,7 @@ bonus_height = [200, 250, 300, 350, 400]
 bonuses = [life_bonus_surface, invul_bonus_surface, big_bonus_surface, small_bonus_surface]
 bonus_list = []
 SPAWNBONUS = pygame.USEREVENT + 2
-pygame.time.set_timer(SPAWNBONUS, 5000)
+pygame.time.set_timer(SPAWNBONUS, 2000)
 
 # Bird
 bird_downflap = pygame.image.load('assets/bluebird-downflap.png').convert_alpha()
@@ -254,7 +237,6 @@ while True:
         score += 0.01
         score_display('main_game')
         score_sound_countdown -= 1
-        life_display('main_game')
         if score_sound_countdown <= 0:
             score_sound.play()
             score_sound_countdown = 100
@@ -263,7 +245,6 @@ while True:
         screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score, high_score)
         score_display('game_over')
-        life_display('game_over')
 
     # Floor
     floor_x_pos -= 1

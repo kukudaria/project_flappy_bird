@@ -36,7 +36,6 @@ def ummunity(last_collision_time, life_countdown):
         life_countdown -= 1
         last_collision_time = pygame.time.get_ticks()
         death_sound.play()
-        print(last_collision_time, life_countdown)
 
     return life_countdown, last_collision_time
 
@@ -54,6 +53,19 @@ def check_collision(pipes, life_countdown, last_collision_time):
         return False, life_countdown, last_collision_time
 
     return True, life_countdown, last_collision_time
+
+def stop_bonus(last_bonus_time, life_countdown):
+    if pygame.time.get_ticks() - last_bonus_time > 200:  # The time is in ms.
+        life_countdown += 1
+        last_bonus_time = pygame.time.get_ticks()
+    return life_countdown, last_bonus_time
+
+def check_bon_coll(bonuses, life_countdown, last_bonus_time):
+    for bonus in bonuses:
+        if bird_rect.colliderect(bonus):
+            life_countdown, last_bonus_time = stop_bonus(last_bonus_time, life_countdown)
+            print(life_countdown)
+    return life_countdown, last_bonus_time
 
 
 def rotate_bird(bird):
@@ -98,21 +110,35 @@ def create_bonus(pipes, bonuses):
         for pipe in pipes:
             pipes_bonuses_collisions.append(bonus.colliderect(pipe))
         if not True in pipes_bonuses_collisions:
-            return bonus
-
+            return bonus, random_bonus_surface
 
 
 def move_bonuses(bonuses_list_rect):
     for bonus in bonuses_list_rect:
-        bonus.centerx -= 5
+        bonus.centerx -= 6
     return bonuses_list_rect
 
 
-
-def draw_bonuses(bonuses, bonuses_list_rect):
-    random_bonus_surface = random.choice(bonuses)
+def draw_bonuses(random_bonus_surface, bonuses_list_rect):
     for bonus in bonuses_list_rect:
         screen.blit(random_bonus_surface, bonus)
+
+
+def life_display(game_state):
+    if game_state == 'main_game':
+        life_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+        life_rect = life_surface.get_rect(center=(50, indent - 60))
+        screen.blit(life_surface, life_rect)
+        life_count_surface = game_font.render(str(int(life_countdown)), True, (255, 255, 255))
+        life_count_rect = life_count_surface.get_rect(center=(80, indent - 60))
+        screen.blit(life_count_surface, life_count_rect)
+    if game_state == 'game_over':
+        life_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+        life_rect = life_surface.get_rect(center=(50, indent - 60))
+        screen.blit(life_surface, life_rect)
+        life_count_surface = game_font.render('0', True, (255, 255, 255))
+        life_count_rect = life_count_surface.get_rect(center=(80, indent - 60))
+        screen.blit(life_count_surface, life_count_rect)
 
 
 indent2 = 450
@@ -131,9 +157,10 @@ bird_movement = 0
 game_active = True
 score = 0
 high_score = 0
-life_countdown = 3
+life_countdown = 100
 invulnerability = False
 last_collision_time = 0
+last_bonus_time = 0
 
 bg_surface = pygame.transform.scale2x(pygame.image.load('assets/background-day.png').convert())
 
@@ -150,7 +177,7 @@ bonus_height = [200, 250, 300, 350, 400]
 bonuses = [life_bonus_surface, invul_bonus_surface, big_bonus_surface, small_bonus_surface]
 bonus_list = []
 SPAWNBONUS = pygame.USEREVENT + 2
-pygame.time.set_timer(SPAWNBONUS, 2000)
+pygame.time.set_timer(SPAWNBONUS, 5000)
 
 # Bird
 bird_downflap = pygame.image.load('assets/bluebird-downflap.png').convert_alpha()
@@ -171,6 +198,7 @@ SPAWNPINE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPINE, 1000)
 pipe_height = [200, 300, 400]
 
+# Game_over
 game_over_surface = pygame.image.load('assets/message.png').convert_alpha()
 game_over_rect = game_over_surface.get_rect(center=(screenx / 2, screeny / 2))
 
@@ -211,7 +239,8 @@ while True:
             bird_surface, bird_rect = bird_animation()
 
         if event.type == SPAWNBONUS:
-            bonus_list.append(create_bonus(pipe_list, bonuses))
+            bonus_rect, random_bonus_surface = create_bonus(pipe_list, bonuses)
+            bonus_list.append(bonus_rect)
 
     screen.blit(bg_surface, (0, 0))
 
@@ -222,8 +251,8 @@ while True:
         bird_rect.centery += bird_movement
         screen.blit(rotated_bird, bird_rect)
         check_collision(pipe_list, life_countdown, last_collision_time)
+        life_countdown, last_bonus_time = check_bon_coll(bonus_list, life_countdown, last_bonus_time)
         game_active, life_countdown, last_collision_time = check_collision(pipe_list, life_countdown, last_collision_time)
-        print(life_countdown)
 
         # Pipes
         pipe_list = move_pipes(pipe_list)
@@ -232,11 +261,12 @@ while True:
         # Bonuses
         if bonus_list:
             bonus_list = move_bonuses(bonus_list)
-            draw_bonuses(bonuses, bonus_list)
+            draw_bonuses(random_bonus_surface, bonus_list)
 
         score += 0.01
         score_display('main_game')
         score_sound_countdown -= 1
+        life_display('main_game')
         if score_sound_countdown <= 0:
             score_sound.play()
             score_sound_countdown = 100
@@ -245,6 +275,7 @@ while True:
         screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score, high_score)
         score_display('game_over')
+        life_display('game_over')
 
     # Floor
     floor_x_pos -= 1
