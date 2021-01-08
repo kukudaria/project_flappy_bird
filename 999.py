@@ -57,19 +57,19 @@ def check_collision(pipes, life_countdown, last_collision_time):
     return True, life_countdown, last_collision_time
 
 
-def stop_bonus(last_bonus_time, score):
+def stop_bonus(last_bonus_time, score, fake_score):
     if pygame.time.get_ticks() - last_bonus_time > 200:  # The time is in ms.
         score += 1
+        fake_score += 1
         last_bonus_time = pygame.time.get_ticks()
-    return score, last_bonus_time
+    return score, last_bonus_time, fake_score
 
 
-def check_bon_coll(bonuses, score, last_bonus_time):
+def check_bon_coll(bonuses, score, last_bonus_time, fake_score):
     for bonus in bonuses:
         if bird_rect.colliderect(bonus):
-            score, last_bonus_time = stop_bonus(last_bonus_time, score)
+            score, last_bonus_time, fake_score = stop_bonus(last_bonus_time, score, fake_score)
             bonuses.pop()
-    fake_score = score
     return fake_score, score, last_bonus_time
 
 
@@ -147,7 +147,7 @@ def life_display(game_state):
 
 
 def update_life_countdown(life_countdown, fake_score):
-    if fake_score % 5 == 0 and fake_score != 0:
+    if fake_score % 2 == 0 and fake_score != 0:
         life_countdown += 1
         fake_score = 0
     return life_countdown, fake_score
@@ -162,6 +162,7 @@ pygame.init()
 screen = pygame.display.set_mode((screenx, screeny))
 clock = pygame.time.Clock()
 game_font = pygame.font.Font('04B_19.TTF', 20)
+check_fake_score = True
 
 # Game Variables
 gravity = 0.25
@@ -264,10 +265,9 @@ while True:
         screen.blit(rotated_bird, bird_rect)
 
         check_collision(pipe_list, life_countdown, last_collision_time)
-        fake_score, score,  last_bonus_time = check_bon_coll(bonus_list, score, last_bonus_time)
+        fake_score, score,  last_bonus_time = check_bon_coll(bonus_list, score, last_bonus_time, fake_score)
         game_active, life_countdown, last_collision_time = check_collision(pipe_list, life_countdown, last_collision_time)
 
-        print(life_countdown)
         life_countdown, fake_score = update_life_countdown(life_countdown, fake_score)
 
         # Pipes
