@@ -3,6 +3,11 @@ import sys
 import random
 
 
+def draw_floor():
+    screen.blit(floor_surface, (floor_x_pos,  indent2))
+    screen.blit(floor_surface, (floor_x_pos + screenx, indent2))
+
+
 def create_pipe():
     random_pipe_pos = random.choice(pipe_height)
     bottom_pipe = pipe_surface.get_rect(midtop=(350 * 2, random_pipe_pos))
@@ -41,7 +46,7 @@ def check_collision(pipes, life_countdown, last_collision_time):
         if bird_rect.colliderect(pipe):
             life_countdown, last_collision_time = ummunity(last_collision_time, life_countdown)
 
-    if bird_rect.top <= -10 or bird_rect.bottom >= 500:
+    if bird_rect.top <= -indent or bird_rect.bottom >= indent2 + 80:
         death_sound.play()
         life_countdown -= 1
 
@@ -126,14 +131,14 @@ def draw_bonuses(random_bonus_surface, bonuses_list_rect):
 
 def life_display(game_state):
     if game_state == 'main_game':
-        life_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+        life_surface = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
         life_rect = life_surface.get_rect(center=(50, indent - 60))
         screen.blit(life_surface, life_rect)
         life_count_surface = game_font.render(str(int(life_countdown)), True, (255, 255, 255))
         life_count_rect = life_count_surface.get_rect(center=(80, indent - 60))
         screen.blit(life_count_surface, life_count_rect)
     if game_state == 'game_over':
-        life_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+        life_surface = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
         life_rect = life_surface.get_rect(center=(50, indent - 60))
         screen.blit(life_surface, life_rect)
         life_count_surface = game_font.render('0', True, (255, 255, 255))
@@ -142,8 +147,9 @@ def life_display(game_state):
 
 
 def update_life_countdown(life_countdown, fake_score):
-    if fake_score % 2 == 0 and fake_score != 0:
+    if fake_score % 5 == 0 and fake_score != 0:
         life_countdown += 1
+        life_sound.play()
         fake_score = 0
     return life_countdown, fake_score
 
@@ -154,6 +160,7 @@ screenx = 288 * 2
 screeny = 512
 pygame.mixer.pre_init(frequency=44100, size=8, channels=1, buffer=1024)
 pygame.init()
+pygame.display.set_caption('Scary Flappy Bird (Red Ver.2.0)')
 screen = pygame.display.set_mode((screenx, screeny))
 clock = pygame.time.Clock()
 game_font = pygame.font.Font('04B_19.TTF', 20)
@@ -165,7 +172,7 @@ bird_movement = 0
 game_active = True
 score = fake_score = 0
 high_score = 0
-life_countdown = 100
+life_countdown = 5
 invulnerability = False
 last_collision_time = 0
 last_bonus_time = 0
@@ -173,20 +180,23 @@ last_bonus_time = 0
 bg_surface = pygame.transform.scale2x(pygame.image.load('assets/cave.jpg').convert())
 
 # Bonuses
-life_bonus_surface = pygame.image.load('assets/yellowbird-midflap.png').convert_alpha()
-invul_bonus_surface = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
-big_bonus_surface = pygame.image.load('assets/yellowbird-upflap.png').convert_alpha()
-small_bonus_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+#life_bonus_surface = pygame.image.load('assets/yellowbird-midflap.png').convert_alpha()
+#invul_bonus_surface = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
+#big_bonus_surface = pygame.image.load('assets/yellowbird-upflap.png').convert_alpha()
+#small_bonus_surface = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
+heart_bonus_surface = pygame.image.load('assets/heart.png').convert_alpha()
+#bonuses = [life_bonus_surface, invul_bonus_surface, big_bonus_surface, small_bonus_surface]
+
 bonus_height = [200, 250, 300, 350, 400]
-bonuses = [life_bonus_surface, invul_bonus_surface, big_bonus_surface, small_bonus_surface]
+bonuses = [heart_bonus_surface]
 bonus_list = []
 SPAWNBONUS = pygame.USEREVENT + 2
 pygame.time.set_timer(SPAWNBONUS, 5000)
 
 # Bird
-bird_downflap = pygame.image.load('assets/bluebird-downflap.png').convert_alpha()
-bird_midflap = pygame.image.load('assets/bluebird-midflap.png').convert_alpha()
-bird_upflap = pygame.image.load('assets/bluebird-upflap.png').convert_alpha()
+bird_downflap = pygame.image.load('assets/redbird-downflap.png').convert_alpha()
+bird_midflap = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
+bird_upflap = pygame.image.load('assets/redbird-upflap.png').convert_alpha()
 bird_frames = [bird_downflap, bird_midflap, bird_upflap]
 bird_index = 0
 bird_surface = bird_frames[bird_index]
@@ -210,6 +220,7 @@ game_over_rect = game_over_surface.get_rect(center=(screenx / 2, screeny / 2))
 flap_sound = pygame.mixer.Sound('audio/sfx_wing.wav')
 death_sound = pygame.mixer.Sound('audio/sfx_hit.wav')
 score_sound = pygame.mixer.Sound('audio/sfx_point.wav')
+life_sound = pygame.mixer.Sound('audio/life_sound.wav')
 
 
 while True:
@@ -276,7 +287,7 @@ while True:
         life_display('main_game')
 
     else:
-        life_countdown = 100
+        life_countdown = 5
         screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score, high_score)
         score_display('game_over')
