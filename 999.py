@@ -3,11 +3,6 @@ import sys
 import random
 
 
-def draw_floor():
-    screen.blit(floor_surface, (floor_x_pos,  indent2))
-    screen.blit(floor_surface, (floor_x_pos + screenx, indent2))
-
-
 def create_pipe():
     random_pipe_pos = random.choice(pipe_height)
     bottom_pipe = pipe_surface.get_rect(midtop=(350 * 2, random_pipe_pos))
@@ -46,7 +41,7 @@ def check_collision(pipes, life_countdown, last_collision_time):
         if bird_rect.colliderect(pipe):
             life_countdown, last_collision_time = ummunity(last_collision_time, life_countdown)
 
-    if bird_rect.top <= -indent or bird_rect.bottom >= indent2:
+    if bird_rect.top <= -10 or bird_rect.bottom >= 500:
         death_sound.play()
         life_countdown -= 1
 
@@ -177,10 +172,6 @@ last_bonus_time = 0
 
 bg_surface = pygame.transform.scale2x(pygame.image.load('assets/cave.jpg').convert())
 
-# Floor
-floor_surface = pygame.transform.scale2x(pygame.image.load('assets/base.png').convert())
-floor_x_pos = 0
-
 # Bonuses
 life_bonus_surface = pygame.image.load('assets/yellowbird-midflap.png').convert_alpha()
 invul_bonus_surface = pygame.image.load('assets/redbird-midflap.png').convert_alpha()
@@ -290,13 +281,6 @@ while True:
         high_score = update_score(score, high_score)
         score_display('game_over')
         life_display('game_over')
-
-    # Floor
-    floor_x_pos -= 1
-    draw_floor()
-    if floor_x_pos <= -screenx:
-        floor_x_pos = 0
-    screen.blit(floor_surface, (floor_x_pos, indent2))
 
     pygame.display.update()
     clock.tick(70)
