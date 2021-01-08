@@ -60,6 +60,7 @@ def stop_bonus(last_bonus_time, score, fake_score):
     if pygame.time.get_ticks() - last_bonus_time > 200:  # The time is in ms.
         score += 1
         fake_score += 1
+        score_sound.play()
         last_bonus_time = pygame.time.get_ticks()
     return score, last_bonus_time, fake_score
 
@@ -219,7 +220,6 @@ flap_sound = pygame.mixer.Sound('audio/sfx_wing.wav')
 death_sound = pygame.mixer.Sound('audio/sfx_hit.wav')
 score_sound = pygame.mixer.Sound('audio/sfx_point.wav')
 
-score_sound_countdown = 100
 
 while True:
     for event in pygame.event.get():
@@ -282,11 +282,8 @@ while True:
             draw_bonuses(random_bonus_surface, bonus_list)
 
         score_display('main_game')
-        score_sound_countdown -= 1
         life_display('main_game')
-        if score_sound_countdown <= 0:
-            score_sound.play()
-            score_sound_countdown = 100
+
     else:
         life_countdown = 100
         screen.blit(game_over_surface, game_over_rect)
