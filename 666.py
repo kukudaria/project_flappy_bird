@@ -206,7 +206,7 @@ BIRDFLAP = pygame.USEREVENT + 1
 pygame.time.set_timer(BIRDFLAP, 200)
 
 # Pipes
-pipe_surface = pygame.image.load('assets/pipe-green.png')
+pipe_surface = pygame.image.load('assets/pipe-red.png')
 pipe_list = []
 SPAWNPINE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPINE, 500)
