@@ -186,6 +186,8 @@ SPAWNPINE = pygame.USEREVENT
 pygame.time.set_timer(SPAWNPINE, 1000)
 pipe_height = [200, 300, 400]
 
+# Game_over
+
 game_over_surface = pygame.image.load('assets/message.png').convert_alpha()
 game_over_rect = game_over_surface.get_rect(center=(screenx / 2, screeny / 2))
 
