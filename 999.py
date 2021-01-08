@@ -38,7 +38,6 @@ def ummunity(last_collision_time, life_countdown):
         life_countdown -= 1
         last_collision_time = pygame.time.get_ticks()
         death_sound.play()
-
     return life_countdown, last_collision_time
 
 
@@ -262,7 +261,10 @@ while True:
         bird_movement += gravity
         rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
-        screen.blit(rotated_bird, bird_rect)
+        if pygame.time.get_ticks() - last_collision_time > 500:
+            screen.blit(rotated_bird, bird_rect)
+        elif pygame.time.get_ticks() % 3 != 0:
+            screen.blit(rotated_bird, bird_rect)
 
         check_collision(pipe_list, life_countdown, last_collision_time)
         fake_score, score,  last_bonus_time = check_bon_coll(bonus_list, score, last_bonus_time, fake_score)
