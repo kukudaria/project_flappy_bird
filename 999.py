@@ -44,7 +44,6 @@ def ummunity(last_collision_time, life_countdown):
 
 def check_collision(pipes, life_countdown, last_collision_time):
     for pipe in pipes:
-        print(pipe)
         if bird_rect.colliderect(pipe):
             life_countdown, last_collision_time = ummunity(last_collision_time, life_countdown)
 
@@ -58,19 +57,20 @@ def check_collision(pipes, life_countdown, last_collision_time):
     return True, life_countdown, last_collision_time
 
 
-def stop_bonus(last_bonus_time, life_countdown):
+def stop_bonus(last_bonus_time, score):
     if pygame.time.get_ticks() - last_bonus_time > 200:  # The time is in ms.
-        life_countdown += 1
+        score += 1
         last_bonus_time = pygame.time.get_ticks()
-    return life_countdown, last_bonus_time
+    return score, last_bonus_time
 
 
-def check_bon_coll(bonuses, life_countdown, last_bonus_time):
+def check_bon_coll(bonuses, score, last_bonus_time):
     for bonus in bonuses:
         if bird_rect.colliderect(bonus):
-            life_countdown, last_bonus_time = stop_bonus(last_bonus_time, life_countdown)
-            print(life_countdown)
-    return life_countdown, last_bonus_time
+            score, last_bonus_time = stop_bonus(last_bonus_time, score)
+            bonuses.pop()
+    fake_score = score
+    return fake_score, score, last_bonus_time
 
 
 def rotate_bird(bird):
@@ -146,6 +146,13 @@ def life_display(game_state):
         screen.blit(life_count_surface, life_count_rect)
 
 
+def update_life_countdown(life_countdown, fake_score):
+    if fake_score % 5 == 0 and fake_score != 0:
+        life_countdown += 1
+        fake_score = 0
+    return life_countdown, fake_score
+
+
 indent2 = 450
 indent = 50 * 2
 screenx = 288 * 2
@@ -160,7 +167,7 @@ game_font = pygame.font.Font('04B_19.TTF', 20)
 gravity = 0.25
 bird_movement = 0
 game_active = True
-score = 0
+score = fake_score = 0
 high_score = 0
 life_countdown = 100
 invulnerability = False
@@ -230,7 +237,7 @@ while True:
                 bonus_list.clear()
                 bird_rect.center = (indent, screeny / 2)
                 bird_movement = 0
-                score = 0
+                score = fake_score = 0
 
         if event.type == SPAWNPINE:
             pipe_list.append(create_pipe())
@@ -250,14 +257,18 @@ while True:
     screen.blit(bg_surface, (0, 0))
 
     if game_active:
-        # Bird
+
         bird_movement += gravity
         rotated_bird = rotate_bird(bird_surface)
         bird_rect.centery += bird_movement
         screen.blit(rotated_bird, bird_rect)
+
         check_collision(pipe_list, life_countdown, last_collision_time)
-        life_countdown, last_bonus_time = check_bon_coll(bonus_list, life_countdown, last_bonus_time)
+        fake_score, score,  last_bonus_time = check_bon_coll(bonus_list, score, last_bonus_time)
         game_active, life_countdown, last_collision_time = check_collision(pipe_list, life_countdown, last_collision_time)
+
+        print(life_countdown)
+        life_countdown, fake_score = update_life_countdown(life_countdown, fake_score)
 
         # Pipes
         pipe_list = move_pipes(pipe_list)
@@ -268,7 +279,6 @@ while True:
             bonus_list = move_bonuses(bonus_list)
             draw_bonuses(random_bonus_surface, bonus_list)
 
-        score += 0.01
         score_display('main_game')
         score_sound_countdown -= 1
         life_display('main_game')
@@ -276,7 +286,7 @@ while True:
             score_sound.play()
             score_sound_countdown = 100
     else:
-        life_countdown = 3
+        life_countdown = 100
         screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score, high_score)
         score_display('game_over')
