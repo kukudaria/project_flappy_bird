@@ -139,6 +139,7 @@ class Bird:
             field.score_rect = field.score_surface.get_rect(center=(field.screenx // 2, field.indent - 60))
             if field.score % 5 == 0:
                 field.life_countdown += 1
+                field.life_count_surface = field.game_font.render(str(int(field.life_countdown)), True, (255, 255, 255))
                 life_sound.play()
 
 
@@ -210,6 +211,7 @@ if __name__ == '__main__':
                     bird.bird_rect.center = (indent, screeny // 2)
                     bird.bird_movement = 0
                     field.score = 0
+                    field.score_surface = field.game_font.render(str(int(field.score)), True, (255, 255, 255))
 
             if event.type == BIRDFLAP:
                 bird.flap()
