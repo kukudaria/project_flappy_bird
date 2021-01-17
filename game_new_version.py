@@ -15,7 +15,7 @@ class Field:
         self.screen = pygame.display.set_mode((self.screenx, self.screeny))
         self.bg_surface = pygame.transform.scale2x(pygame.image.load(bg_image).convert())
         self.game_over_surface = pygame.image.load(game_over_image).convert_alpha()
-        self.game_over_rect = self.game_over_surface.get_rect(center=(self.screenx / 2, self.screeny / 2))
+        self.game_over_rect = self.game_over_surface.get_rect(center=(self.screenx // 2, self.screeny // 2))
         self.life_surface = pygame.image.load(life_surface_image).convert_alpha()
         self.life_rect = self.life_surface.get_rect(center=(50, self.indent - 60))
         self.life_count_surface = self.game_font.render(str(int(self.life_countdown)), True, (255, 255, 255))
@@ -23,7 +23,7 @@ class Field:
         self.score = 0
         self.high_score = 0
         self.score_surface = self.game_font.render(str(int(self.score)), True, (255, 255, 255))
-        self.score_rect = self.score_surface.get_rect(center=(self.screenx / 2, self.indent - 60))
+        self.score_rect = self.score_surface.get_rect(center=(self.screenx // 2, self.indent - 60))
         self.pipe_list = []
         self.bonus_list = []
 
@@ -43,11 +43,11 @@ class Field:
             self.high_score = self.score
         self.screen.blit(self.game_over_surface, self.game_over_rect)
         self.score_surface = self.game_font.render(str(int(self.score)), True, (255, 255, 255))
-        self.score_rect = self.score_surface.get_rect(center=(screenx / 2, indent - 60))
+        self.score_rect = self.score_surface.get_rect(center=(screenx // 2, indent - 60))
         self.screen.blit(self.score_surface, self.score_rect)
 
         high_score_surface = self.game_font.render(f'High score: {int(self.high_score)}', True, (255, 255, 255))
-        high_score_rect = high_score_surface.get_rect(center=(self.screenx / 2, 425))
+        high_score_rect = high_score_surface.get_rect(center=(self.screenx // 2, 425))
         self.screen.blit(high_score_surface, high_score_rect)
 
 
@@ -87,7 +87,7 @@ class Bird:
         self.indent2 = indent2
         self.last_collision_time = 0
         self.bird_surface = self.bird_frames[self.bird_index]
-        self.bird_rect = self.bird_surface.get_rect(center=(self.indent, field.screeny / 2))
+        self.bird_rect = self.bird_surface.get_rect(center=(self.indent, field.screeny // 2))
 
     def rotate_bird(self):
         self.bird_surface = pygame.transform.rotozoom(self.bird_surface, - self.bird_movement * 3, 1)
@@ -136,7 +136,7 @@ class Bird:
             score_sound.play()
             field.score += 1
             field.score_surface = field.game_font.render(str(int(field.score)), True, (255, 255, 255))
-            field.score_rect = field.score_surface.get_rect(center=(field.screenx / 2, field.indent - 60))
+            field.score_rect = field.score_surface.get_rect(center=(field.screenx // 2, field.indent - 60))
             if field.score % 5 == 0:
                 field.life_countdown += 1
                 life_sound.play()
@@ -207,7 +207,7 @@ if __name__ == '__main__':
                     field.life_countdown = 5
                     field.life_count_surface = field.game_font.render(str(int(field.life_countdown)), True, (255, 255, 255))
                     field.pipe_list.clear()
-                    bird.bird_rect.center = (indent, screeny / 2)
+                    bird.bird_rect.center = (indent, screeny // 2)
                     bird.bird_movement = 0
                     field.score = 0
 
