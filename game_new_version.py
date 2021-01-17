@@ -82,7 +82,6 @@ class Bird:
         self.bird_frames = [self.bird_downflap, self.bird_midflap, self.bird_upflap]
         self.bird_index = 0
         self.bird_movement = 0
-        self.pipe_list = []
         self.indent = indent
         self.indent2 = indent2
         self.last_collision_time = 0
@@ -208,6 +207,7 @@ if __name__ == '__main__':
                     field.life_countdown = 5
                     field.life_count_surface = field.game_font.render(str(int(field.life_countdown)), True, (255, 255, 255))
                     field.pipe_list.clear()
+                    field.bonus_list.clear()
                     bird.bird_rect.center = (indent, screeny // 2)
                     bird.bird_movement = 0
                     field.score = 0
